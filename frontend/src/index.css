@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text font-inter antialiased min-h-screen selection:bg-primary/30 selection:text-primary;
+    /* Rich aesthetic background from coolors: https://coolors.co/000000-14213d-fca311-e5e5e5-ffffff */
+    /* Let's use a dynamic tech palette: https://coolors.co/050505-1b1b1e-373f51-008dd5-df3b57 */
+    background: radial-gradient(circle at 15% 50%, rgba(0, 141, 213, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(223, 59, 87, 0.08), transparent 25%);
+    background-color: #050505;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-outfit tracking-tight;
+  }
+}
+
+@layer components {
+  /* Premium Glassmorphism Card */
+  .glass-card {
+    @apply bg-[#1b1b1e]/60 backdrop-blur-xl border border-white/5 shadow-2xl rounded-2xl;
+  }
+
+  /* Dynamic glowing input */
+  .glow-input {
+    @apply bg-[#050505]/50 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#008dd5]/50 focus:border-[#008dd5] transition-all duration-300 placeholder:text-white/30;
+  }
+
+  /* Vibrant animated button */
+  .btn-primary {
+    @apply relative overflow-hidden bg-gradient-to-r from-[#008dd5] to-[#373f51] hover:from-[#008dd5] hover:to-[#df3b57] text-white font-outfit font-bold py-4 px-8 rounded-xl transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,141,213,0.4)];
+  }
+}
+
+/* Custom scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#008dd5]/50;
+}
+
+/* Subtle animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .8; transform: scale(1.05); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

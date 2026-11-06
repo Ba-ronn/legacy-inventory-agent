@@ -1,21 +1,27 @@
 import json
-from typing import List
+from typing import List, Optional
 from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
 from ..models.manifest import MappingManifest
+from ..core.config import settings
 
 # Assume SchemaTable is defined in the models or imported appropriately
 # For this service, we just expect a list of Pydantic models or dicts that we can dump
 class LangChainService:
-    def __init__(self, provider: str = "openai", model_name: str = "gpt-4o"):
+    def __init__(self, provider: Optional[str] = None, model_name: Optional[str] = None):
         """
         Initializes the dynamic chat model based on provider configuration, 
         supporting the BYOK multi-provider architecture.
+        Falls back to the configured provider/model when the caller does not pick one.
         """
         # init_chat_model automatically handles routing to ChatOpenAI, ChatAnthropic, etc.
-        self.llm = init_chat_model(model=model_name, model_provider=provider, temperature=0)
+        self.llm = init_chat_model(
+            model=model_name or settings.llm_model,
+            model_provider=provider or settings.llm_provider,
+            temperature=0,
+        )
 
     async def suggest_schema_mapping(self, tenant_id: str, db_dialect: str, legacy_schema: List[any]) -> MappingManifest:
         """
@@ -27,8 +33,12 @@ class LangChainService:
         system_prompt = """
         You are an expert database architect. Your job is to map a legacy database schema to our Standard Inventory Model.
         Our Standard Model expects these tables:
-        1. 'inventory' (columns: sku, quantity, location_id)
+        1. 'inventory' (columns: sku, quantity, location_id, description)
         2. 'orders' (columns: order_id, sku, quantity, location_id)
+
+        'description' is optional, but map it whenever the legacy table carries a
+        product name or description: people search by product name, not SKU code.
+        Leave out any standard column that has no sensible match in the legacy schema.
         
         You will be provided with the user's legacy database schema.
         Map the legacy tables and columns to our Standard Model to the best of your ability.

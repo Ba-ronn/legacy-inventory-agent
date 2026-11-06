@@ -8,17 +8,17 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+/build/
 develop-eggs/
 dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
-parts/
+/lib/
+/lib64/
+/parts/
 sdist/
-var/
+/var/
 wheels/
 share/python-wheels/
 *.egg-info/
@@ -73,7 +73,7 @@ docs/_build/
 
 # PyBuilder
 .pybuilder/
-target/
+/target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -220,3 +220,13 @@ __marimo__/
 # Agentic ERP
 *.db
 manifest_*.json
+
+# Screen recordings and their transcripts: kept locally until there is a
+# proper demo video to publish in their place.
+docs/*.gif
+docs/*.mp4
+
+# Local test runbook. The connection strings in it carry the credentials of the
+# throwaway containers on this machine, and it is written for one person at one
+# desk, so it stays local.
+docs/manual-test-script.txt

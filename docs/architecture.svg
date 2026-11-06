@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 980" width="1240" height="980" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#88d498"/>
+    </marker>
+    <marker id="arrowDim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6f9ba8"/>
+    </marker>
+  </defs>
+
+  <rect width="1240" height="980" fill="#0b2730"/>
+
+  <text x="40" y="48" fill="#f3e9d2" font-size="25" font-weight="700">Agentic Inventory System — Architecture</text>
+  <text x="40" y="74" fill="#88d498" font-size="13.5">A standard semantic model projected onto an arbitrary legacy schema. The mapping manifest is the contract every layer below the API reads.</text>
+
+  <!-- ============ BROWSER ============ -->
+  <rect x="40" y="100" width="880" height="140" rx="14" fill="#103742" stroke="#1a936f" stroke-width="1.5"/>
+  <text x="60" y="126" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">BROWSER — React 19 · Vite · Tailwind · React Flow</text>
+
+  <rect x="62" y="140" width="200" height="80" rx="10" fill="#1a936f"/>
+  <text x="162" y="169" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Onboarding wizard</text>
+  <text x="162" y="189" fill="#eaf7ef" font-size="11.5" text-anchor="middle">engine → connection</text>
+  <text x="162" y="205" fill="#eaf7ef" font-size="11.5" text-anchor="middle">→ review → approve</text>
+
+  <rect x="276" y="140" width="200" height="80" rx="10" fill="#1a936f"/>
+  <text x="376" y="169" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Mapping canvas</text>
+  <text x="376" y="189" fill="#eaf7ef" font-size="11.5" text-anchor="middle">renders the manifest</text>
+  <text x="376" y="205" fill="#eaf7ef" font-size="11.5" text-anchor="middle">standard ↔ legacy</text>
+
+  <rect x="490" y="140" width="200" height="80" rx="10" fill="#1a936f"/>
+  <text x="590" y="169" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Agent terminal</text>
+  <text x="590" y="189" fill="#eaf7ef" font-size="11.5" text-anchor="middle">natural language</text>
+  <text x="590" y="205" fill="#eaf7ef" font-size="11.5" text-anchor="middle">chat with the agent</text>
+
+  <rect x="704" y="140" width="194" height="80" rx="10" fill="#15505f" stroke="#88d498" stroke-width="1.2"/>
+  <text x="801" y="169" fill="#f3e9d2" font-size="13.5" font-weight="700" text-anchor="middle">lib/api.ts</text>
+  <text x="801" y="189" fill="#aecfd6" font-size="11.5" text-anchor="middle">axios client · types</text>
+  <text x="801" y="205" fill="#aecfd6" font-size="11.5" text-anchor="middle">connection in localStorage</text>
+
+  <line x1="480" y1="240" x2="480" y2="282" stroke="#88d498" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="494" y="268" fill="#88d498" font-size="11.5">HTTP / JSON · CORS</text>
+
+  <!-- ============ API ============ -->
+  <rect x="40" y="286" width="880" height="128" rx="14" fill="#103742" stroke="#1a936f" stroke-width="1.5"/>
+  <text x="60" y="312" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">API — FastAPI (fully async)</text>
+
+  <rect x="62" y="326" width="203" height="70" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="163" y="352" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">POST /inspect</text>
+  <text x="163" y="372" fill="#aecfd6" font-size="11" text-anchor="middle">reflects the live schema</text>
+  <text x="163" y="387" fill="#aecfd6" font-size="11" text-anchor="middle">async URL → sync driver</text>
+
+  <rect x="279" y="326" width="203" height="70" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="380" y="352" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">POST /suggest-mapping</text>
+  <text x="380" y="372" fill="#aecfd6" font-size="11" text-anchor="middle">LLM proposes the</text>
+  <text x="380" y="387" fill="#aecfd6" font-size="11" text-anchor="middle">manifest</text>
+
+  <rect x="496" y="326" width="203" height="70" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="597" y="352" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">POST /save-manifest</text>
+  <text x="597" y="372" fill="#aecfd6" font-size="11" text-anchor="middle">persists the approved</text>
+  <text x="597" y="387" fill="#aecfd6" font-size="11" text-anchor="middle">mapping per tenant</text>
+
+  <rect x="713" y="326" width="185" height="70" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="805" y="352" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">POST /chat/query</text>
+  <text x="805" y="372" fill="#aecfd6" font-size="11" text-anchor="middle">loads manifest, then</text>
+  <text x="805" y="387" fill="#aecfd6" font-size="11" text-anchor="middle">delegates to the agent</text>
+
+  <line x1="480" y1="414" x2="480" y2="456" stroke="#88d498" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ AGENT ============ -->
+  <rect x="40" y="460" width="880" height="166" rx="14" fill="#103742" stroke="#1a936f" stroke-width="1.5"/>
+  <text x="60" y="486" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">AGENT — LangGraph ReAct loop</text>
+
+  <rect x="62" y="500" width="262" height="110" rx="10" fill="#1a936f"/>
+  <text x="193" y="528" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">InventoryAgent</text>
+  <text x="193" y="550" fill="#eaf7ef" font-size="11.5" text-anchor="middle">create_react_agent</text>
+  <text x="193" y="568" fill="#eaf7ef" font-size="11.5" text-anchor="middle">reason → call tool → observe</text>
+  <text x="193" y="592" fill="#d6f0e2" font-size="10.5" text-anchor="middle">tenant, credentials and manifest</text>
+  <text x="193" y="605" fill="#d6f0e2" font-size="10.5" text-anchor="middle">travel in RunnableConfig</text>
+
+  <rect x="338" y="500" width="262" height="110" rx="10" fill="#15505f" stroke="#88d498" stroke-width="1.2"/>
+  <text x="469" y="526" fill="#f3e9d2" font-size="13.5" font-weight="700" text-anchor="middle">Tools</text>
+  <text x="469" y="548" fill="#aecfd6" font-size="11.5" text-anchor="middle">fuzzy_search_product</text>
+  <text x="469" y="565" fill="#aecfd6" font-size="11.5" text-anchor="middle">get / update_inventory_stock</text>
+  <text x="469" y="582" fill="#aecfd6" font-size="11.5" text-anchor="middle">transfer_inventory_stock</text>
+  <text x="469" y="599" fill="#aecfd6" font-size="11.5" text-anchor="middle">create_order</text>
+
+  <rect x="614" y="500" width="284" height="110" rx="10" fill="#0f3d4a" stroke="#2f7f93" stroke-dasharray="4 3"/>
+  <text x="756" y="526" fill="#f3e9d2" font-size="13" font-weight="700" text-anchor="middle">Why the LLM stays safe</text>
+  <text x="756" y="548" fill="#aecfd6" font-size="11" text-anchor="middle">It never sees the connection string</text>
+  <text x="756" y="565" fill="#aecfd6" font-size="11" text-anchor="middle">or the raw manifest, and it cannot</text>
+  <text x="756" y="582" fill="#aecfd6" font-size="11" text-anchor="middle">write SQL. It only picks a tool and</text>
+  <text x="756" y="599" fill="#aecfd6" font-size="11" text-anchor="middle">its arguments.</text>
+
+  <line x1="480" y1="626" x2="480" y2="668" stroke="#88d498" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ SERVICES ============ -->
+  <rect x="40" y="672" width="880" height="152" rx="14" fill="#103742" stroke="#1a936f" stroke-width="1.5"/>
+  <text x="60" y="698" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">SERVICES — schema-agnostic execution</text>
+
+  <rect x="62" y="712" width="270" height="96" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="197" y="738" fill="#f3e9d2" font-size="13" font-weight="700" text-anchor="middle">LangChainService</text>
+  <text x="197" y="759" fill="#aecfd6" font-size="11" text-anchor="middle">init_chat_model — provider and</text>
+  <text x="197" y="775" fill="#aecfd6" font-size="11" text-anchor="middle">model come from settings (BYOK)</text>
+  <text x="197" y="795" fill="#aecfd6" font-size="11" text-anchor="middle">parses the manifest it proposes</text>
+
+  <rect x="346" y="712" width="270" height="96" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="481" y="738" fill="#f3e9d2" font-size="13" font-weight="700" text-anchor="middle">InventoryService</text>
+  <text x="481" y="759" fill="#aecfd6" font-size="11" text-anchor="middle">logical name → physical name</text>
+  <text x="481" y="775" fill="#aecfd6" font-size="11" text-anchor="middle">builds SQLAlchemy Core statements</text>
+  <text x="481" y="795" fill="#aecfd6" font-size="11" text-anchor="middle">enforces the stock invariants</text>
+
+  <rect x="630" y="712" width="268" height="96" rx="10" fill="#15505f" stroke="#2f7f93"/>
+  <text x="764" y="738" fill="#f3e9d2" font-size="13" font-weight="700" text-anchor="middle">DatabaseService</text>
+  <text x="764" y="759" fill="#aecfd6" font-size="11" text-anchor="middle">async engine pool, keyed by</text>
+  <text x="764" y="775" fill="#aecfd6" font-size="11" text-anchor="middle">(tenant, connection string)</text>
+  <text x="764" y="795" fill="#aecfd6" font-size="11" text-anchor="middle">runs multi-step work in one txn</text>
+
+  <line x1="480" y1="824" x2="480" y2="866" stroke="#88d498" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ DATA ============ -->
+  <rect x="40" y="870" width="880" height="86" rx="14" fill="#0f3d4a" stroke="#2f7f93" stroke-width="1.5"/>
+  <text x="60" y="896" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">DATA</text>
+
+  <rect x="196" y="886" width="230" height="54" rx="9" fill="#114b5f" stroke="#88d498"/>
+  <text x="311" y="908" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">manifest_&lt;tenant&gt;.json</text>
+  <text x="311" y="927" fill="#aecfd6" font-size="11" text-anchor="middle">the mapping, per tenant</text>
+
+  <rect x="446" y="886" width="246" height="54" rx="9" fill="#114b5f" stroke="#88d498"/>
+  <text x="569" y="908" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">Legacy PostgreSQL</text>
+  <text x="569" y="927" fill="#aecfd6" font-size="11" text-anchor="middle">TBL_STOCK_MST · TBL_ORD_HDR</text>
+
+  <rect x="712" y="886" width="186" height="54" rx="9" fill="#0d3a47" stroke="#2f7f93" stroke-dasharray="4 3"/>
+  <text x="805" y="908" fill="#aecfd6" font-size="12" font-weight="700" text-anchor="middle">MySQL · SQL Server</text>
+  <text x="805" y="927" fill="#8fb3bd" font-size="11" text-anchor="middle">SQLite — same code path</text>
+
+  <!-- ============ LLM COLUMN ============ -->
+  <rect x="950" y="460" width="250" height="364" rx="14" fill="#103742" stroke="#88d498" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="970" y="486" fill="#88d498" font-size="12" font-weight="700" letter-spacing="1.4">LLM PROVIDER</text>
+
+  <rect x="972" y="500" width="206" height="96" rx="10" fill="#1a936f"/>
+  <text x="1075" y="528" fill="#ffffff" font-size="13.5" font-weight="700" text-anchor="middle">Groq</text>
+  <text x="1075" y="549" fill="#eaf7ef" font-size="11" text-anchor="middle">openai/gpt-oss-120b</text>
+  <text x="1075" y="568" fill="#eaf7ef" font-size="11" text-anchor="middle">tool calling + reasoning</text>
+  <text x="1075" y="586" fill="#d6f0e2" font-size="10.5" text-anchor="middle">LLM_PROVIDER / LLM_MODEL</text>
+
+  <rect x="972" y="612" width="206" height="90" rx="10" fill="#0f3d4a" stroke="#2f7f93" stroke-dasharray="4 3"/>
+  <text x="1075" y="637" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">Swappable</text>
+  <text x="1075" y="658" fill="#aecfd6" font-size="11" text-anchor="middle">OpenAI · Anthropic</text>
+  <text x="1075" y="675" fill="#aecfd6" font-size="11" text-anchor="middle">Google — one setting,</text>
+  <text x="1075" y="692" fill="#aecfd6" font-size="11" text-anchor="middle">no code change</text>
+
+  <rect x="972" y="718" width="206" height="88" rx="10" fill="#0f3d4a" stroke="#2f7f93"/>
+  <text x="1075" y="743" fill="#f3e9d2" font-size="12.5" font-weight="700" text-anchor="middle">Used twice</text>
+  <text x="1075" y="764" fill="#aecfd6" font-size="11" text-anchor="middle">1 · to propose the</text>
+  <text x="1075" y="780" fill="#aecfd6" font-size="11" text-anchor="middle">mapping at onboarding</text>
+  <text x="1075" y="797" fill="#aecfd6" font-size="11" text-anchor="middle">2 · to drive the agent</text>
+
+  <path d="M 900 555 L 948 555" stroke="#88d498" stroke-width="2" marker-end="url(#arrow)" fill="none"/>
+  <path d="M 948 575 L 900 575" stroke="#6f9ba8" stroke-width="1.6" marker-end="url(#arrowDim)" fill="none" stroke-dasharray="5 3"/>
+</svg>

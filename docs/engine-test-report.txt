@@ -1,0 +1,86 @@
+
+=== POSTGRESQL ===
+  postgresql+asyncpg://invtest:<password>@localhost:5433/legacy_inventory
+
+1. inspect (real schema reflection)
+  [PASS] reflected the legacy tables — TBL_ORD_HDR, TBL_STOCK_MST
+     TBL_STOCK_MST: N_ROW_ID, C_ITEM_CD, C_ITEM_DESC, N_QTY_ON_HAND, C_WHSE_ID, D_LAST_UPD
+     TBL_ORD_HDR: N_SEQ, C_ORD_NO, C_ITEM_CD, N_ORD_QTY, C_STORE_ID, D_CREATED
+
+2. suggest-mapping (LLM bridges it onto the standard model)
+  [PASS] mapped both logical tables — inventory, orders
+     inventory -> TBL_STOCK_MST  (sku->C_ITEM_CD, quantity->N_QTY_ON_HAND, location_id->C_WHSE_ID, description->C_ITEM_DESC)
+     orders -> TBL_ORD_HDR  (order_id->C_ORD_NO, sku->C_ITEM_CD, quantity->N_ORD_QTY, location_id->C_STORE_ID)
+
+3. save-manifest (scoped to this connection)
+  [PASS] manifest stored for this connection — 2 tables / 8 columns
+
+4. agent queries
+   > How many hex bolts do we have in total?
+     We have **8,950** hex bolts in total across all locations.
+  [PASS] postgresql: read returned this database's own total — expected 8,950
+   > Transfer 40 units of SKU-WIDGET-001 from WH-LONDON to WH-LEEDS
+     The transfer of 40 units of **SKU‑WIDGET‑001** from **WH‑LONDON** to **WH‑LEEDS** was completed successfully.
+   > What is the stock of SKU-WIDGET-001 in each location now?
+     - WH‑LONDON: 380 units  
+- WH‑LEEDS: 125 units
+   > Create order ORD-5005 for 12 units of SKU-CAM-4K at store ST-BRISTOL
+     Order **ORD-5005** for 12 units of **SKU‑CAM‑4K** at store **ST‑BRISTOL** has been created.
+
+=== MYSQL ===
+  mysql+aiomysql://invtest:<password>@localhost:3307/berlin_inventory
+
+1. inspect (real schema reflection)
+  [PASS] reflected the legacy tables — inv_master, ord_lines
+     inv_master: id, itm_sku, itm_name, qty_avail, loc_cd
+     ord_lines: id, ord_ref, itm_sku, qty_req, dest_cd
+
+2. suggest-mapping (LLM bridges it onto the standard model)
+  [PASS] mapped both logical tables — inventory, orders
+     inventory -> inv_master  (sku->itm_sku, quantity->qty_avail, location_id->loc_cd, description->itm_name)
+     orders -> ord_lines  (order_id->ord_ref, sku->itm_sku, quantity->qty_req, location_id->dest_cd)
+
+3. save-manifest (scoped to this connection)
+  [PASS] manifest stored for this connection — 2 tables / 8 columns
+
+4. agent queries
+   > How many hex bolts do we have in total?
+     We have **4,400** hex bolts in total.
+  [PASS] mysql: read returned this database's own total — expected 4,400
+   > Transfer 250 units of SKU-WIDGET-001 from LOC-BERLIN to LOC-MUNICH
+     The transfer of 250 units of **SKU‑WIDGET‑001** from **LOC‑BERLIN** to **LOC‑MUNICH** has been completed successfully.
+   > What is the stock of SKU-WIDGET-001 in each location now?
+     - LOC‑BERLIN: 650 units  
+- LOC‑MUNICH: 370 units
+   > Create order ORD-9001 for 7 units of SKU-CAM-4K at LOC-MUNICH
+     Order **ORD-9001** for 7 units of **SKU‑CAM‑4K** at **LOC‑MUNICH** has been created.
+
+=== SQLITE ===
+  sqlite+aiosqlite:///dublin_ops.db
+
+1. inspect (real schema reflection)
+  [PASS] reflected the legacy tables — purchase_orders, stock_ledger
+     purchase_orders: seq, po_number, part_number, order_qty, ship_to
+     stock_ledger: row_id, part_number, part_label, on_hand_qty, site_code
+
+2. suggest-mapping (LLM bridges it onto the standard model)
+  [PASS] mapped both logical tables — inventory, orders
+     inventory -> stock_ledger  (sku->part_number, quantity->on_hand_qty, location_id->site_code, description->part_label)
+     orders -> purchase_orders  (order_id->po_number, sku->part_number, quantity->order_qty, location_id->ship_to)
+
+3. save-manifest (scoped to this connection)
+  [PASS] manifest stored for this connection — 2 tables / 8 columns
+
+4. agent queries
+   > How many hex bolts do we have in total?
+     We have **2,250** hex bolts in total across all locations.
+  [PASS] sqlite: read returned this database's own total — expected 2,250
+   > Transfer 100 units of SKU-WIDGET-001 from SITE-DUBLIN to SITE-CORK
+     The transfer of 100 units of **SKU‑WIDGET‑001** from **SITE‑DUBLIN** to **SITE‑CORK** has been completed successfully.
+   > What is the stock of SKU-WIDGET-001 in each location now?
+     - SITE‑DUBLIN: 400 units  
+- SITE‑CORK: 160 units
+   > Create order PO-7003 for 5 units of SKU-CAM-4K at SITE-CORK
+     Order **PO-7003** for 5 units of **SKU‑CAM‑4K** at **SITE‑CORK** has been created.
+
+ALL CHECKS PASSED

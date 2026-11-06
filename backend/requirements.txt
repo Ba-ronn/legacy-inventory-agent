@@ -7,6 +7,31 @@ langchain>=0.1.0
 langchain-openai>=0.0.2.post1
 langchain-anthropic>=0.1.1
 langchain-google-genai>=0.0.5
+langchain-groq>=0.1.0
 langgraph>=0.0.20
+# One driver pair per engine the onboarding screen offers: an async driver for
+# the agent and a sync one for the SQLAlchemy reflection that onboarding runs.
+# PostgreSQL
 asyncpg>=0.29.0
 psycopg2-binary>=2.9.9
+# MySQL / MariaDB. cryptography is not optional in practice: MySQL 8 defaults to
+# the caching_sha2_password auth plugin, and PyMySQL cannot complete that
+# handshake over a plain TCP connection without it. It currently arrives as a
+# transitive dependency of langchain-google-genai, so dropping that provider
+# would silently break MySQL; declare it here instead.
+aiomysql>=0.2.0
+pymysql>=1.1.0
+cryptography>=42.0.0
+# SQLite (sync side is stdlib)
+aiosqlite>=0.19.0
+# SQL Server. These two are not enough on their own: the machine also needs
+# Microsoft's "ODBC Driver 18 for SQL Server", which is a separate system install
+# (winget install --id Microsoft.msodbcsql.18). The connection string then names it:
+#   mssql+aioodbc://user:pw@host:1433/db
+#       ?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes
+# TrustServerCertificate is needed against a server with a self-signed certificate,
+# which the official container image has; drop it where the certificate is trusted.
+aioodbc>=0.5.0
+pyodbc>=5.0.0
+python-dotenv>=1.0.0
+greenlet>=3.0.0

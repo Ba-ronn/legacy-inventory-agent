@@ -1,10 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.agent.tools.inventory import db_service
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    yield
+    # Connection pools to the customer databases are cached for the life of the
+    # process, so closing them is our job rather than the garbage collector's.
+    await db_service.dispose_all()
+
 
 app = FastAPI(
     title="Agentic Inventory System API",
     description="Intelligent Orchestration of Hybrid Data Ecosystems API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # Configure CORS for the frontend (React/Vite)

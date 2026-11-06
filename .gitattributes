@@ -1,0 +1,25 @@
+# Line endings are a property of the repository, not of whoever happens to be
+# cloning it. Without this file the answer depends on each contributor's local
+# core.autocrlf: set to false on Windows, it commits CRLF blobs, and from then
+# on every diff touching that file looks like the whole file changed.
+#
+# text=auto  — Git decides what is text, and stores it with LF.
+# eol=lf     — and checks it out with LF everywhere, Windows included.
+* text=auto eol=lf
+
+# Scripts the Windows shells will not run unless the lines end in CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary: never convert, never try to diff. The recordings are ignored for now
+# but will come back as a demo video, and a converted video is a broken one.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.gif  binary
+*.mp4  binary
+*.webm binary
+*.woff  binary
+*.woff2 binary

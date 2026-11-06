@@ -1,74 +1,275 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Colour tokens are semantic, not literal: components ask for `surface` or
+  `danger`, never for a hex. That is what stopped error states rendering in the
+  brand's mint green when the theme flipped.
+
+  Every foreground/background pair below is at or above WCAG AA (4.5:1 for body
+  text, 3:1 for large text and UI chrome).
+*/
+:root,
+:root.light {
+  --c-canvas: 246 243 235;          /* warm paper */
+  --c-surface: 255 255 255;
+  --c-surface-raised: 255 255 255;
+  --c-surface-sunken: 238 234 223;
+  --c-line: 219 213 198;
+  --c-line-strong: 196 188 169;
+
+  --c-ink: 14 44 56;                /* 12.6:1 on canvas */
+  --c-ink-muted: 74 100 110;        /*  5.3:1 on canvas */
+  --c-ink-faint: 110 133 141;       /*  3.4:1 — labels and meta only */
+  --c-ink-inverse: 255 255 255;
+
+  --c-primary: 15 122 87;           /*  5.3:1 against white */
+  --c-primary-hover: 11 98 69;
+  --c-primary-soft: 222 240 232;
+  --c-on-primary: 255 255 255;
+
+  --c-accent: 17 75 95;
+  --c-accent-soft: 219 231 234;
+
+  --c-danger: 178 46 36;
+  --c-danger-soft: 251 232 229;
+  --c-warning: 150 92 4;
+  --c-warning-soft: 252 240 219;
+  --c-success: 15 122 87;
+  --c-success-soft: 222 240 232;
+
+  --c-shadow: 14 44 56;
+
+  color-scheme: light;
+}
+
+.dark {
+  --c-canvas: 7 30 38;              /* sits *behind* the brand teal so cards can lift */
+  --c-surface: 13 43 53;
+  --c-surface-raised: 18 55 67;
+  --c-surface-sunken: 6 24 31;
+  --c-line: 30 74 88;
+  --c-line-strong: 44 97 113;
+
+  --c-ink: 234 244 239;             /* 14.1:1 on canvas */
+  --c-ink-muted: 157 185 190;       /*  7.2:1 on canvas */
+  --c-ink-faint: 120 150 158;       /*  4.6:1 on canvas */
+  --c-ink-inverse: 6 37 46;
+
+  --c-primary: 43 185 138;          /*  6.8:1 on canvas */
+  --c-primary-hover: 61 205 157;
+  --c-primary-soft: 19 62 60;
+  --c-on-primary: 6 37 46;          /* dark ink on mint — 7.4:1 */
+
+  --c-accent: 136 212 152;
+  --c-accent-soft: 21 64 66;
+
+  --c-danger: 240 119 107;          /* unmistakably not green */
+  --c-danger-soft: 62 29 30;
+  --c-warning: 233 185 73;
+  --c-warning-soft: 58 44 19;
+  --c-success: 69 201 140;
+  --c-success-soft: 16 59 50;
+
+  --c-shadow: 0 0 0;
+
+  color-scheme: dark;
+}
+
 @layer base {
-  body {
-    @apply bg-background text-text font-inter antialiased min-h-screen selection:bg-primary/30 selection:text-primary;
-    /* Rich aesthetic background from coolors: https://coolors.co/000000-14213d-fca311-e5e5e5-ffffff */
-    /* Let's use a dynamic tech palette: https://coolors.co/050505-1b1b1e-373f51-008dd5-df3b57 */
-    background: radial-gradient(circle at 15% 50%, rgba(0, 141, 213, 0.08), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(223, 59, 87, 0.08), transparent 25%);
-    background-color: #050505;
+  * {
+    @apply border-line;
   }
-  
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased min-h-screen;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+  }
+
   h1, h2, h3, h4, h5, h6 {
-    @apply font-outfit tracking-tight;
+    @apply font-display tracking-tight;
+  }
+
+  /* One consistent, visible focus ring everywhere, instead of none. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-canvas rounded-[6px];
+  }
+
+  ::selection {
+    @apply bg-primary/25;
+  }
+
+  /* Firefox + WebKit scrollbars, previously WebKit only. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--c-line-strong)) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-pill border-[3px] border-solid border-transparent;
+    background-clip: content-box;
+    background-color: rgb(var(--c-line-strong));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--c-primary) / 0.6);
   }
 }
 
 @layer components {
-  /* Premium Glassmorphism Card */
-  .glass-card {
-    @apply bg-[#1b1b1e]/60 backdrop-blur-xl border border-white/5 shadow-2xl rounded-2xl;
+  /*
+    Two distinct card treatments instead of one translucent blur used for
+    everything: `card` for content that holds text, `glass` for chrome that
+    floats over the canvas.
+  */
+  .card {
+    @apply bg-surface border border-line rounded-card shadow-card;
   }
 
-  /* Dynamic glowing input */
-  .glow-input {
-    @apply bg-[#050505]/50 border border-white/10 text-white rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#008dd5]/50 focus:border-[#008dd5] transition-all duration-300 placeholder:text-white/30;
+  .glass {
+    @apply bg-surface/70 backdrop-blur-xl border border-line rounded-card shadow-soft;
   }
 
-  /* Vibrant animated button */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-field
+           px-5 py-3 text-sm transition-all duration-200
+           disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none
+           active:translate-y-px select-none whitespace-nowrap;
+  }
+
   .btn-primary {
-    @apply relative overflow-hidden bg-gradient-to-r from-[#008dd5] to-[#373f51] hover:from-[#008dd5] hover:to-[#df3b57] text-white font-outfit font-bold py-4 px-8 rounded-xl transition-all duration-500 transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,141,213,0.4)];
+    @apply btn bg-primary text-primary-on shadow-soft
+           hover:bg-primary-hover hover:shadow-lift hover:-translate-y-0.5
+           active:translate-y-0;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-ink border border-line
+           hover:bg-surface-raised hover:border-line-strong;
+  }
+
+  .btn-quiet {
+    @apply btn bg-transparent text-ink-muted px-3 py-2 hover:text-ink hover:bg-surface-raised;
+  }
+
+  .field {
+    @apply w-full bg-surface-sunken text-ink border border-line rounded-field
+           px-4 py-3 text-sm transition-all duration-200
+           placeholder:text-ink-faint
+           hover:border-line-strong
+           focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/15
+           disabled:opacity-60;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-pill border border-line
+           bg-surface/80 px-3 py-1.5 text-xs font-medium text-ink-muted;
+  }
+
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-[0.08em] text-ink-muted;
+  }
+
+  /* Status blocks share one shape so they are recognisable at a glance. */
+  .notice {
+    @apply flex items-start gap-3 rounded-field border px-4 py-3 text-sm;
+  }
+
+  .notice-danger {
+    @apply notice border-danger/35 bg-danger-soft text-danger;
+  }
+
+  .notice-warning {
+    @apply notice border-warning/35 bg-warning-soft text-warning;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-surface-raised;
+  }
+
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--c-ink) / 0.07),
+      transparent
+    );
   }
 }
 
-/* Custom scrollbar for a premium feel */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+@layer utilities {
+  /* Stagger helper: set --i on a child and it joins the sequence. */
+  .stagger > * {
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .grid-texture {
+    background-image:
+      linear-gradient(rgb(var(--c-line) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--c-line) / 0.5) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
+  }
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
+/* Motion is decoration — never a barrier for anyone who has switched it off. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full;
+/* React Flow reads our tokens rather than shipping its own palette. */
+.react-flow__attribution {
+  display: none;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-[#008dd5]/50;
+.react-flow__controls-button {
+  background: rgb(var(--c-surface-raised)) !important;
+  border-bottom: 1px solid rgb(var(--c-line)) !important;
+  fill: rgb(var(--c-ink)) !important;
 }
 
-/* Subtle animations */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+.react-flow__controls-button:hover {
+  background: rgb(var(--c-primary) / 0.18) !important;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+/* Edge labels have to be themed through React Flow's own variables: its
+   stylesheet is imported from the canvas component, so it lands after this file
+   in the bundle and a plain .react-flow__edge-textbg rule loses to it. */
+.react-flow {
+  --xy-edge-label-background-color: rgb(var(--c-surface-raised));
+  --xy-edge-label-color: rgb(var(--c-ink-muted));
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .8; transform: scale(1.05); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.react-flow__edge-text {
+  font-size: 10px;
+  font-weight: 600;
 }

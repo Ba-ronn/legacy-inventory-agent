@@ -1,10 +1,37 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta
+      name="description"
+      content="Agentic Inventory — bridge a legacy database to a standard inventory model and query it in plain English."
+    />
+    <meta name="theme-color" content="#071e26" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f3eb" media="(prefers-color-scheme: light)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Agentic Inventory</title>
+    <script>
+      // Resolve the theme before first paint so the page never flashes the
+      // wrong palette on reload.
+      (function () {
+        try {
+          var stored = localStorage.getItem('ais.theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          document.documentElement.classList.toggle('light', theme === 'light');
+        } catch (e) {
+          /* Keep the default dark class from the markup. */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

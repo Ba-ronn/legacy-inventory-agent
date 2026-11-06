@@ -1,10 +1,9 @@
-import json
-import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from typing import Optional
 
 from ..agent.core import InventoryAgent
-from ..models.manifest import MappingManifest
+from ..services import manifest_store
 
 router = APIRouter()
 
@@ -16,9 +15,16 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
 
-# Instantiate the agent globally or use dependency injection
-# Using gpt-4o as the reasoning engine for the agent
-agent = InventoryAgent(provider="openai", model_name="gpt-4o")
+# The agent is built on first use rather than at import time: constructing it
+# here would make the whole application fail to import when the configured
+# provider has no credentials.
+_agent: Optional[InventoryAgent] = None
+
+def get_agent() -> InventoryAgent:
+    global _agent
+    if _agent is None:
+        _agent = InventoryAgent()
+    return _agent
 
 @router.post("/query", response_model=ChatResponse)
 async def process_chat_query(request: ChatRequest):
@@ -26,22 +32,19 @@ async def process_chat_query(request: ChatRequest):
     Receives a natural language query from the user, retrieves their mapped manifest,
     and delegates to the LangGraph Inventory Agent.
     """
-    file_path = f"manifest_{request.tenant_id}.json"
-    
-    if not os.path.exists(file_path):
+    # Scoped to the connection, so the agent resolves columns against the schema
+    # that was actually mapped rather than whichever one was onboarded last.
+    manifest = manifest_store.load(request.tenant_id, request.connection_string)
+
+    if manifest is None:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail=f"No mapping manifest found for tenant {request.tenant_id}. Please complete the onboarding flow first."
         )
-        
+
     try:
-        # Load the manifest from our simulated application DB
-        with open(file_path, 'r') as f:
-            manifest_data = json.load(f)
-            manifest = MappingManifest(**manifest_data)
-            
         # Execute the agent graph
-        response_text = await agent.process_query(
+        response_text = await get_agent().process_query(
             user_query=request.query,
             tenant_id=request.tenant_id,
             connection_string=request.connection_string,
